@@ -33,8 +33,12 @@ export default async function handler(req, res) {
     });
 
     const result = await response.json();
-    res.status(response.ok ? 200 : response.status).json(result);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+if (!response.ok) {
+  return res.status(response.status).json({ error: result.error || "Transcription failed" });
+}
+res.status(200).json({
+  text: result.text || "(empty result)",
+  language: result.language || "unknown"
+});
   }
 }
